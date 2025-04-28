@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.scss';
 import { peopleFromServer } from './data/people';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Person } from './types/Person';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -23,16 +23,17 @@ export const App: React.FC = () => {
   const [query, setQuery] = useState('');
   const [selectedGuy, setSelectedGuy] = useState<Person | null>(null);
 
+  useEffect(() => {
+    if (selectedGuy && inputValue !== selectedGuy.name) {
+      setSelectedGuy(null);
+    }
+  }, [inputValue, selectedGuy]);
   const applyQuery = useCallback(debounce(setQuery, 300), []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event?.target.value);
     applyQuery(event?.target.value);
   };
-
-  if (selectedGuy && inputValue !== selectedGuy.name) {
-    setSelectedGuy(null);
-  }
 
   const onSelected = (person: Person) => {
     setSelectedGuy(person);
